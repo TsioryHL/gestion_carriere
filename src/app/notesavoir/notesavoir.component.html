@@ -1,0 +1,202 @@
+<div class="px-3 py2">
+    <div class="info-item mt-2" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+        <h3 class="px-4">{{nom_processus}}</h3>
+        <div class="form-floating mt-2 ms-4">
+            <input type="email" class="form-control" id="floatingInputValue" placeholder="name@example.com" readonly [(ngModel)]="matricule">
+            <label for="floatingInputValue">Matricule</label>
+        </div>
+        <div class="form-floating mt-2 ms-4">
+            <input type="email" class="form-control nom" id="floatingInputValue" placeholder="name@example.com" readonly [(ngModel)]="nomprenom">
+            <label for="floatingInputValue">Nom</label>
+        </div>
+        <div class="form-floating mt-2 ms-4">
+            <input type="email" class="form-control fonction" id="floatingInputValue" placeholder="name@example.com" readonly [(ngModel)]="nom_fonction">
+            <label for="floatingInputValue">Fonction</label>
+        </div>
+        <div class="form-floating mt-2 ms-4">
+            <input type="email" class="form-control ancien" id="floatingInputValue" placeholder="name@example.com" value="18" readonly [(ngModel)]="anciennete">
+            <label for="floatingInputValue">Ancienneté</label>
+        </div>
+        <button class="btn btn-sm btn-secondary ms-4 mt-2" *ngIf="mode_vue" ngbTooltip="Réinitialiser" placement="right" (click)="resetInfoPersonnel()"><i class="bi bi-x-lg"></i></button>
+    </div>
+    
+    <div *ngIf="role != 'Utilisateur' || (status_responsable && mode_vue)" class="d-flex flex-row align-items-center justify-content-between">
+        <table style="width: 20%;" class="mt-3 tableNote">
+            <tr>
+                <th colspan="2" style="background-color: rgb(247, 239, 223);">{{nom_processus}}</th>
+            </tr>
+            <tr>
+                <td>{{moyenne_requis}}</td>
+                <td>{{moyenne_acceptable}}</td>
+            </tr>
+        </table>
+        <table class="mt-3 ms-3 tableNote" style="width: 80%;">
+            <tr>
+                <ng-container *ngFor="let item of liste_processus">
+                    <th *ngIf="nom_processus != item.libelle_processus">{{item.libelle_processus}}</th>
+                </ng-container>
+            </tr>
+            <tr>
+                <ng-container *ngFor="let item of liste_processus">
+                    <td *ngIf="nom_processus != item.libelle_processus">{{item.frequence}}</td>
+                </ng-container>
+            </tr>
+        </table>
+    </div>
+<div>
+
+<!--referentiel-->
+<div [ngClass]="{'mt-4': role != 'Utilisateur', 'mt-3': role == 'Utilisateur'}" class="mb-2 d-flex flex-row justify-content-between align-items-center">
+    <span class="h3 fw-light">Référentiels du poste</span>
+    <div class="shadow-divider" [ngClass]="{'modifier_user': info_existe && role == 'Utilisateur','enregistrer_user': !info_existe && role == 'Utilisateur','modifier_resp': info_existe && (role != 'Utilisateur' || status_responsable),'enregistrer_resp': !info_existe && (role != 'Utilisateur' || status_responsable)}"></div>
+    <button class="btn btn-sm" style="background-color: rgba(215, 204, 204, 0.452);" *ngIf="role != 'Utilisateur' || status_responsable" data-bs-toggle="modal" data-bs-target="#listePersonnel">Voir la liste <i class="bi bi-card-list ms-1"></i></button>
+    <button class="btn btn-sm" style="background-color: rgba(214, 230, 243, 0.805);" (click)="saveSavoir()" *ngIf="!info_existe">Enregistrer <i class="bi bi-box-arrow-down ms-1"></i></button>
+    <button class="btn btn-sm" style="background-color: rgb(243, 235, 217);" (click)="saveSavoir()" *ngIf="info_existe" [disabled]="mode_vue">Enregistrer les modifications <i class="bi bi-pencil-fill ms-1"></i></button>
+</div>
+
+<!--Savoir-->
+<div class="card border-0 shadow-sm mt-2 mb-3" *ngFor="let item of referentiel_categorie; let i = index">
+    <div class="card-header">
+        <div class="input-group">
+            <span class="input-group-text" style="background-color: rgb(223, 247, 228);" id="basic-addon3">{{item.titre_categorie}}</span>
+            <textarea class="form-control" [(ngModel)]="item.description_categorie" rows="1" cols="0" aria-label="With textarea" readonly></textarea>
+        </div>
+    </div>
+    <div class="card-body" style="background-color: rgb(243, 243, 243);">
+      <blockquote class="blockquote mb-0" *ngFor="let ref of item.referentiel; let y = index">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="input-group mb-1 ref-input">
+                <span class="input-group-text index-text">{{y+1}}</span>
+                <span class="input-group-text ref-text">{{ref.ref}}</span>
+            </div>
+            <div class="input-group mb-1 level-select">
+                <label class="input-group-text" for="inputGroupSelect01">Niveau</label>
+                <select class="form-select" id="inputGroupSelect01" [(ngModel)]="ref.libelle_niveau" [ngClass]="{'error-border': ref.error == true}" [disabled]="mode_vue">
+                    <option value="" selected disabled></option>
+                    <option *ngFor="let niveau of ref.liste_niveau_categorie" value="{{niveau.libelle_niveau}}">{{niveau.libelle_niveau}}</option>
+                </select>
+            </div>
+        </div>
+      </blockquote>
+    </div>
+</div>
+
+<!--Autres savoir-->
+<!-- <div class="mt-4 mb-5">
+    <hr>
+</div> -->
+<div class=" mt-5 d-flex flex-row justify-content-between align-items-center" *ngFor="let item of autre_savoir; let i = index">
+    <div class="px-3 rounded border mb-3 shadow-sm" style="background-color: rgb(240, 240, 240); width: 100%;">
+        <div class="d-flex flex-row justify-content-between align-items-center px-3" style="position: relative; bottom:22px; left:0;">
+            <div class="d-flex flex-row align-items-center justify-content-center" style="width: 100%;">
+                <span class="px-3 py-1 h4 border fw-normal" style="background-color: white; width: 15%;">Autres savoir<span *ngIf="autre_savoir.length > 1">{{i+1}}</span></span>
+                <div class="ms-2 d-flex align-items-center" style="width: 100%;">
+                    <select id="proc2" class="ms-1 py-1 px-2" style="width: 30%; border-color: rgb(217, 217, 217); border-radius: 4px;" [(ngModel)]="item.titre_categorie" [disabled]="mode_vue" (change)="onSelectCategory(item.titre_categorie,i)">
+                        <option value="" class="text-center" selected disabled>-- Choisir une catégorie --</option>
+                        <option *ngFor="let categorie of titre_categorie_sans_doublon" [value]="categorie.titre_categorie" [disabled]="isCategoryDisabled(categorie, i)">{{categorie.titre_categorie}}</option>
+                    </select>
+                    <input *ngIf="role !== 'Utilisateur'" type="text" class="form-control ms-1" style="width: 34%; border-color: rgb(217, 217, 217); border-radius: 4px;" [(ngModel)]="item.processus" [disabled]="mode_vue" readonly>
+                    <textarea class="form-control ms-1" style="width: 85%;" [(ngModel)]="item.description_categorie" rows="1" cols="0" aria-label="With textarea" readonly></textarea>
+                </div>
+            </div>
+            <div class="d-flex flex-row align-items-center">
+                <button class="btn btn-sm ms-2" style="background-color: rgba(170, 170, 170, 0.452);" (click)="resetautressavoir(i, item.processus)" [hidden]="mode_vue"> <i class="bi bi-arrow-clockwise"></i> </button>
+                <button class="btn btn-sm ms-1" style="background-color: rgba(223, 177, 177, 0.682);" *ngIf="autre_savoir.length > 1" [hidden]="mode_vue" (click)="supprimerObjet(i, item.processus);"> <i class="bi bi-x-lg"></i> </button>
+            </div>
+        </div>
+        <div style="position: relative; bottom:17px; left:0;">
+            <!--referentiel_autre_savoir-->
+            <div class="d-flex flex-column justify-content-between mb-2 mt-2" *ngFor="let referentiel of item.referentiel; let y = index">
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                    <div class="input-group" [ngClass]="{'width_autre_savoir':!mode_vue, 'width_autre_savoir_resp':mode_vue}">
+                        <label class="input-group-text" for="exampleDataList{{i}}{{y}}">{{y+1}}</label>
+                        <input class="form-control" [attr.list]="'datalistOptions' + i + y" id="exampleDataList{{i}}{{y}}" placeholder="Tapez ici ..." [(ngModel)]="referentiel.ref">
+                        <datalist id="datalistOptions{{i}}{{y}}">
+                            <option *ngFor="let ref of item.liste_referentiel" [value]="ref.ref">{{ref.ref}}</option>
+                        </datalist>                        
+                    </div>
+                    <div class="input-group" style="width: 15%;">
+                        <label class="input-group-text" for="inputGroupSelect{{i}}{{y}}">Niveau</label>
+                        <select class="form-select" id="inputGroupSelect{{i}}{{y}}" [(ngModel)]="referentiel.libelle_niveau" [disabled]="mode_vue">
+                            <option value="" selected disabled></option>
+                            <option *ngFor="let niveau of referentiel.liste_niveau" value="{{niveau.libelle_niveau}}">{{niveau.libelle_niveau}}</option>
+                        </select>
+                    </div>  
+                    <button class="btn btn-sm" style="background-color: rgba(223, 177, 177, 0.682);" [hidden]="mode_vue" (click)="supprimerObjetReferentiel(i,y)" *ngIf="item.referentiel.length != y+1"> <i class="bi bi-trash"></i> </button>
+                    <button class="btn btn-sm" (click)="ajoutRefautresSavoir(i)" style="background-color: rgba(174, 213, 243, 0.805);" [hidden]="mode_vue" ngbTooltip="Ajouter" placement="bottom" *ngIf="item.referentiel.length == y+1"> <i class="bi bi-plus-lg"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+<button class="btn btn-sm" style="background-color: rgba(174, 213, 243, 0.805);" (click)="ajoutAutreSavoir()" [hidden]="mode_vue" [disabled]="disable_bouton_ajout" *ngIf="autre_savoir.length < 7"> <i class="bi bi-plus-lg"></i> Ajouter autre savoir</button> 
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="listePersonnel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Liste des personnels</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color:rgb(248,248,248);">
+            <div style="font-size: 15px;" class="d-flex flex-row align-items-center justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <div>
+                        <label for="processus">Processus : </label>
+                        <select class="ms-2 p-1" id="processus" style="width: 180px; border:1px solid rgb(216, 216, 216); border-radius:4px;" [(ngModel)]="processus_filtre" (change)="ligne_filtre = ''" [disabled]="status_responsable">
+                            <option value="" selected></option>
+                            <option *ngFor="let processus of liste_processus_filtre_modal" [value]="processus.num_processus">{{processus.libelle_processus}}</option>
+                        </select>
+                    </div>
+                    <div class="ms-3">
+                        <label for="ligne">Ligne : </label>
+                        <select class="ms-2 p-1" id="ligne" style="width: 300px; border:1px solid rgb(216, 216, 216); border-radius:4px;" [(ngModel)]="ligne_filtre" [disabled]="processus_filtre != 1">
+                            <option value="" selected></option>
+                            <option *ngFor="let ligne of lignes_production" [value]="ligne.id_ligne">{{ligne.id_ligne + " - " + ligne.lib_ligne}}</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-2" ngbTooltip="Filtrer" placement="bottom" (click)="filtreByProcLigne(processus_filtre, ligne_filtre)"> <i class="bi bi-funnel-fill"></i> </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm ms-1" ngbTooltip="Réinitialiser" placement="bottom" (click)="resetFiltre()"> <i class="bi bi-arrow-clockwise"></i> </button>
+                </div>
+                <div class="bg-white px-3 py-1 rounded border">
+                    <span>{{nombre_savoir_configure +" / "+ liste_personnel_dynamique.length}}</span>
+                </div>
+                <div>
+                    <label for="matricule">Matricule : </label>
+                    <input type="text" maxlength="5" id="matricule" style="border:1px solid rgb(216, 216, 216); border-radius:4px;" class="px-2 py-1 ms-2" placeholder="Recherche..." [(ngModel)]="matricule_filtre_field" (keyup)="filtreByMatricule(matricule_filtre_field)">
+                </div>
+            </div>
+            <hr>
+            <table class="table table-bordered table-sm shadow-sm" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">Matricule</th>
+                        <th style="width: 22%;">Nom & prénom</th>
+                        <th style="width: 11%;">Processus</th>
+                        <th style="width: 23%;">Ligne</th>
+                        <th style="width: 22%;">Poste</th>
+                        <th style="width: 17%;" colspan="2">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let item of liste_personnel_dynamique; let i = index">
+                        <tr>
+                            <td>{{item.matricule}}</td>
+                            <td>{{item.nom + " " + item.prenoms}}</td>
+                            <td>{{item.libelle_processus}}</td>
+                            <td>{{item.ligne_defaut + " - " + item.lib_ligne}}</td>
+                            <td>{{item.nom_poste}}</td>
+                            <td *ngIf="item.status == 1" style="background-color: rgba(150, 214, 150, 0.603);">Configuré</td>
+                            <td *ngIf="item.status == 0">Non configuré</td>
+                            <td><button class="btn btn-sm" data-bs-dismiss="modal" [ngClass]="{'opacity_zero':item.status == 0}" style="background-color: rgba(170, 170, 170, 0.452);" [disabled]="item.status == 0" (click)="voirInfoPersonnel(item.matricule)"> <i class="bi bi-eye"></i> </button></td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+</div>

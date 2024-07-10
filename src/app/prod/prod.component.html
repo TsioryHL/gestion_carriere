@@ -1,0 +1,187 @@
+<div class="p-3">
+    <div class="d-flex flex-row justify-content-center align-items-center">
+        <div class="form-floating mb-3" style="width: 23%;">
+            <!-- <input type="text" class="form-control" maxlength="5" aria-describedby="basic-addon1" [(ngModel)]="matricule"> -->
+            <input type="text" class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." maxlength="5" aria-describedby="basic-addon1" [(ngModel)]="matricule">
+            <datalist id="datalistOptions">
+                <option *ngFor="let item of liste_personnel_dynamique" [value]="item.matricule">{{item.matricule}}</option>
+            </datalist>
+            <label for="floatingInput">Matricule</label>
+          </div>
+        <div class="form-floating mb-3 ms-2" style="width: 23%;">
+            <input type="month" class="form-control" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="date_debut">
+            <label for="floatingSelectProcessus">Date début</label>
+        </div>
+        <div class="form-floating mb-3 ms-2" style="width: 23%;">
+            <input type="month" class="form-control" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="date_fin">
+            <label for="floatingInput">Date fin</label>
+        </div>
+        <button class="btn btn-sm mb-3 ms-4" style="background-color: #d7e3f1;" (click)="getSavoirFaireProd()"> Recherche  <i class="bi bi-search"></i></button>
+        <button *ngIf="role === 'Responsable' || 'Administrateur' || (status_responsable)" class="btn btn-sm mb-3 ms-3" style="background-color: #c2f1de;" ngbTooltip="Parametrage O" placement="bottom" data-bs-toggle="modal" data-bs-target="#listePersonnel"><i class="bi bi-gear-wide-connected"></i></button>
+    </div>
+
+<!--Note Cadence-->
+<div class="accordion mt-2" id="accordionExample">
+    <div class="accordion-item" style="background-color: #f9f9f9;">
+        <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button collapsed" id="buttonCollapse" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <div class="w-100 ps-3 pe-4 d-flex flex-row justify-content-between align-items-center">
+                <span class="fs-5">CADENCE</span>
+                <span class="bg-light p-2 px-3 rounded border">{{note_savoir_faire_cadence}}</span>
+            </div>
+        </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <table style="width: 100%;vertical-align: middle;background-color: #f9f9f9;" class="table1 table-bordered shadow-sm">
+                <tr class="first-row" style="background-color: rgb(100, 123, 149); color: white;">
+                    <td style="width: 16%;">LIGNE</td>
+                    <td style="width: 15%;">PLAN</td>
+                    <td>FONCTION</td>
+                    <td style="width: 18%;">OPERATION</td>
+                    <td>OBJECTIF</td>
+                    <td>REALISE</td>
+                    <td style="width: 8%;">SITUATION</td>
+                    <td>Taux d'atteinte</td>
+                    <td>EVALUATION</td>
+                </tr>
+                <tr class="even-row" *ngFor="let item of data_savoir_faire_prod_filter; let i =index">
+                    <td>{{item.id_ligne +" - "+ item.lib_ligne}}</td>
+                    <td>{{item.id_plan +" - "+ item.lib_plan}}</td>
+                    <td>{{item.id_fonction +" - "+ item.lib_fonction}}</td>
+                    <td>{{item.id_operation +" - "+ item.lib_operation}}</td>
+                    <td>{{item.cadence_objectif}}</td>
+                    <td>{{item.cadence_atteinte}}</td>
+                    <td *ngIf="item.taux_atteinte_cadence > 100" class="success"><i class="bi bi-arrow-up"></i></td>
+                    <td *ngIf="item.taux_atteinte_cadence < 100" class="danger"><i class="bi bi-arrow-down"></i></td>
+                    <td *ngIf="item.taux_atteinte_cadence == 100" class="warning"><i class="bi bi-arrow-right"></i></td>
+                    <td>{{item.taux_atteinte_cadence + " %" }}</td>
+                    <td>{{item.evaluation_cadence}}</td>
+                </tr>
+            </table>
+        </div>
+        </div>
+    </div>
+    <!--Note Qualite-->
+    <div class="accordion-item" style="background-color: #f7f7f7;">
+        <h2 class="accordion-header" id="headingTwo">
+        <button class="accordion-button collapsed" type="button" id="buttonCollapse" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            <div class="w-100 ps-3 pe-4 d-flex flex-row justify-content-between align-items-center">
+                <span class="fs-5">QUALITE</span>
+                <span class="bg-light p-2 px-3 rounded border">{{note_savoir_faire_qualite}}</span>
+            </div>
+        </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <table style="width: 100%;vertical-align: middle;background-color: #f9f9f9;" class="table1 table-bordered shadow-sm">
+                <tr class="first-row" style="background-color: rgb(100, 123, 149); color: white;">
+                    <td style="width: 16%;">LIGNE</td>
+                    <td style="width: 15%;">PLAN</td>
+                    <td>FONCTION</td>
+                    <td style="width: 18%;">OPERATION</td>
+                    <td>SEUIL</td>
+                    <td>REALISE</td>
+                    <td style="width: 8%;">SITUATION</td>
+                    <td>Taux qualité atteint</td>
+                    <td>EVALUATION</td>
+                </tr>
+                <tr class="even-row" *ngFor="let item of data_savoir_faire_prod_filter; let i =index">
+                    <td>{{item.id_ligne +" - "+ item.lib_ligne}}</td>
+                    <td>{{item.id_plan +" - "+ item.lib_plan}}</td>
+                    <td>{{item.id_fonction +" - "+ item.lib_fonction}}</td>
+                    <td>{{item.id_operation +" - "+ item.lib_operation}}</td>
+                    <td>{{item.qualite_objectif}}</td>
+                    <td>{{item.qualite_atteinte}}</td>
+                    <td *ngIf="item.taux_atteinte_qualite > 100" class="success"><i class="bi bi-arrow-up"></i></td>
+                    <td *ngIf="item.taux_atteinte_qualite < 100" class="danger"><i class="bi bi-arrow-down"></i></td>
+                    <td *ngIf="item.taux_atteinte_qualite == 100" class="warning"><i class="bi bi-arrow-right"></i></td>
+                    <td>{{item.taux_atteinte_qualite+" "+"%"}}</td>
+                    <td>{{item.evaluation_qualite}}</td>
+                </tr>
+            </table>
+        </div>
+        </div>
+    </div>
+    <!--Polyvalence-->
+    <div class="accordion-item" style="background-color: #f7f7f7;">
+        <h2 class="accordion-header" id="headingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            <div class="w-100 ps-3 pe-4 d-flex flex-row justify-content-between align-items-center">
+                <span class="fs-5">POLYVALENCE</span>
+                <span class="bg-light p-2 px-3 rounded border">{{note_savoir_faire_polyvalence}}</span>
+            </div>
+        </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <table style="width: 100%;vertical-align: middle;background-color: #f9f9f9;" class="table1 table-bordered shadow-sm">
+                    <tr class="first-row" style="background-color: rgb(100, 123, 149); color: white;">
+                        <td>LIGNE</td>
+                        <td>PLAN</td>
+                        <td>FONCTION</td>
+                        <td>OPERATION</td>
+                        <td>SITUATION</td>
+                    </tr>
+                    <tr *ngFor="let item of data_savoir_faire_prod; let y = index">
+                        <td>{{item.id_ligne +" - "+ item.lib_ligne}}</td>
+                        <td>{{item.id_plan +" - "+ item.lib_plan}}</td>
+                        <td>{{item.id_fonction +" - "+ item.lib_fonction}}</td>
+                        <td>{{item.id_operation +" - "+ item.lib_operation}}</td>
+                        <td *ngIf="item.situation == 'U'" class="success">{{item.situation}}</td>
+                        <td *ngIf="item.situation == 'L'" class="warning">{{item.situation}}</td>
+                        <td  *ngIf="item.situation == 'I'" class="danger">{{item.situation}}<i *ngIf="item.isBelowNhac" class="bi bi-chat-right ms-2" ngbTooltip="h < nhac" placement="bottom"></i></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal-->
+<div class="modal fade" id="listePersonnel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Liste des personnels</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color:rgb(248,248,248);">
+            <div style="font-size: 15px;" class="d-flex flex-row align-items-center justify-content-between">
+                <div>
+                    <label for="matricule">Matricule : </label>
+                    <input type="text" maxlength="5" id="matricule" style="border:1px solid rgb(216, 216, 216); border-radius:4px;" class="px-2 py-1 ms-2" placeholder="Recherche..." [(ngModel)]="matricule_filtre_field" (keyup)="filtreByMatricule(matricule_filtre_field)">
+                </div>
+            </div>
+            <table class="table table-bordered table-sm shadow-sm mt-3 text-center" style="font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">Matricule</th>
+                        <th style="width: 30%;">Nom & prénom</th>
+                        <th style="width: 10%;">Processus</th>
+                        <th style="width: 23%;">Ligne</th>
+                        <th style="width: 22%;">Poste</th>
+                        <th style="width: 13%;" colspan="2">Situation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of liste_personnel_dynamique; let i = index">
+                            <td>{{item.matricule}}</td>
+                            <td>{{item.nom + " " + item.prenoms}}</td>
+                            <td>{{item.libelle_processus}}</td>
+                            <td>{{item.ligne_defaut + " - " + item.lib_ligne}}</td>
+                            <td>{{item.nom_poste}}</td>
+                            <td style="width: 3%;">{{item.situation}}</td>
+                            <td><button [disabled]="item.situation !='U' && role !='Manager'" [ngStyle]="{'background-color': item.button_active ? '#4eb58b' : '#f7f7f7'}" (click)="getPersonnel_U(item.matricule, item.libelle_processus, item.ligne_defaut, item.lib_ligne, item.nom, item.prenoms, item.nom_poste, item.button_active)" class="btn btn-sm"><i [ngStyle]="{'color': item.button_active ? '#f7f7f7' : 'initial'}" class="bi bi-check-circle-fill"></i></button></td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+

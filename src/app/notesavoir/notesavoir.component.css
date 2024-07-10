@@ -1,0 +1,129 @@
+.form-control.note {
+  text-align: center;
+  align-items: center;
+}
+.info-item h3 {
+  background-color: rgb(216, 247, 223);
+  padding: 10px; 
+  border-radius: 8px;
+  color: #5e5e5e;
+  margin-top: 10px;
+}
+
+.info-item .form-control.fonction{
+  width: 300px; 
+}
+
+.info-item .form-control.nom {
+  width: 300px; 
+}
+
+.no-border-button {
+  text-decoration: underline;
+  border: none;
+  background-color: transparent;
+  color: black;
+}
+
+.no-border-button:hover {
+  color: blue;
+}
+
+.no-border-button:active {
+  color: blue;
+}
+
+.form-control {
+  font-size: 14px;
+}
+
+.tableNote {
+  width: 800px;
+    border-collapse: collapse;
+    font-size: small;
+}
+
+th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tableNote {
+  border: 1px solid rgb(192, 192, 192);
+}
+
+.tableNote th, .tableNote td {
+  border: 1px solid rgb(192, 192, 192);
+}
+
+.tableNote {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tableNote th:first-child, .tableNote td:first-child {
+  text-align: center;
+  border: 1px solid rgb(192, 192, 192);
+}
+
+.tableNote {
+  width: 100%;
+  table-layout: fixed;
+  background-color: white;
+}
+
+.tableNote th, .tableNote td {
+  text-align: center;
+  border: 1px solid rgb(192, 192, 192);
+}
+
+.hideProc{
+  opacity: 0;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.error-border {
+  border: 2px solid rgb(231, 184, 184);
+}
+
+.enregistrer_user{width: 75%;}
+.modifier_user{width: 68%;}
+.enregistrer_resp{width: 69%}
+.modifier_resp{width: 62%}
+.opacity_zero{opacity: 0.2;}
+.width_autre_savoir_resp{width: 84%;}
+.width_autre_savoir{width: 81%;}
+
+.ref-input .index-text {
+  width: 2.5%;
+}
+
+.ref-input .ref-text {
+  width: 96.5%;
+  background-color: rgb(249, 249, 249);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.level-select {
+  width: 20%;
+}
+
+.shadow-divider {
+  height: 0.5px;
+  margin-top: 10px;
+  background-color: #dad9d9;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+

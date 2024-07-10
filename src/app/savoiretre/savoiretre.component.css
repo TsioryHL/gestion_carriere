@@ -1,0 +1,54 @@
+tr, td {
+  font-size: 11px;
+  align-items: center;
+}
+
+table {
+  align-items: center;
+  text-align: center;
+  border-color: rgba(67, 55, 55, 0.392);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-control {
+  align-items: center;
+  text-align: center;
+}
+
+table thead tr:nth-child(1) {
+  font-family: 'PoliceH1', sans-serif; 
+}
+
+table tbody td:first-child,
+table thead td:first-child{
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+table tbody td:nth-child(2),
+table thead .secondLign td:nth-child(2){
+  position: sticky;
+  left: 70px;
+  z-index: 2;
+}
+table thead {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  vertical-align: middle;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: rgb(173, 207, 240); 
+  color: rgba(45, 45, 188, 0.876);
+  border-color: rgb(173, 207, 240); 
+}
+
+.Improd {
+  background-color: gray;
+}

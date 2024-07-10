@@ -1,0 +1,177 @@
+<div class="p-4">
+    <div class="d-flex flex-row justify-content-between">
+        <!-- PROCESSUS -->
+         <div class="form-floating" style="width: 33%;">
+            <select class="form-select" id="floatingSelectProcessus" aria-label="Floating label select example" [(ngModel)]="processus" (change)="changeFonction()">
+        <!--la valeur de l'item dans processus aura la valeur de num_processus dans le console puis afficher-->
+                <option value="0" disabled>Veuillez sélectionner un processus</option>
+                <option *ngFor="let item of liste_processus" [value]="item.num_processus">{{item.libelle_processus}}</option>
+            </select>
+            <label for="floatingSelectProcessus">Processus</label>
+                <!-- Message d'erreur pour Processus -->
+        <div *ngIf="erreurProcessus" class="error-message">
+            Veuillez entrer un processus valide.
+        </div>
+         </div>
+        <!-- POSTE -->
+         <div class="form-floating" style="width: 33%;">
+            <select class="form-select" id="floatingSelectPoste" aria-label="Floating label select example" [(ngModel)]="fonction" (change)="handleFunctionChange()">
+                <option value="0" disabled>Veuillez sélectionner une fonction</option>
+                <option *ngFor="let item of liste_fonction_dynamique" [value]="item.num_fonction">{{item.nom_fonction}}</option>
+            </select>
+            <label for="floatingSelectPoste">Fonction</label>
+            <div *ngIf="erreurFonction" class="error-message">
+                Veuillez entrer un fonction valide.
+            </div>
+         </div>  
+        <!-- DATE -->
+         <div class="form-floating mb-3" style="width: 33%;">
+            <input type="date" class="form-control" id="floatingInput" placeholder="name@example.com" [(ngModel)]="datenow" readonly>
+            <label for="floatingInput">Date</label>
+         </div>
+    </div>
+        <!-- Ref Poste -->
+    <div class="mt-3 d-flex flex-row justify-content-between align-items-center">
+        <span class="h3 fw-light">Référentiel du poste</span>
+        <hr [ngClass]="{'modifier':resultatGetReferentiel.length == 1, 'enregistrer':resultatGetReferentiel.length == 0}">
+        <div class="ms-3">
+            <button class="btn btn-sm ms-2" style="background-color: rgb(226, 226, 226); font-size: 12px;" ngbTooltip="Paramètrage niveau" placement="top" data-bs-toggle="modal" data-bs-target="#Param_niveau"><i class="bi bi-gear-wide-connected"></i></button>
+            <button class="btn btn-sm ms-2"  style="background-color: rgb(226, 226, 226); font-size: 12px;" ngbTooltip="Copier" placement="top" (click)="copier()" [disabled]="disable_button_copier"><i class="bi bi-clipboard-check-fill"></i></button>
+            <button class="btn btn-sm ms-2" style="background-color: rgb(226, 226, 226); font-size: 12px;"  ngbTooltip="Coller" placement="top" (click)="coller()" [disabled]="disable_button_coller"><i class="bi bi-clipboard2-fill"></i></button>
+        </div>
+        <button class="btn btn-sm ms-2" (click)="saveref()" *ngIf="resultatGetReferentiel.length == 0" style="background-color: rgb(204, 222, 204);"> Enregistrer  <i class="bi bi-save me-1"></i></button>
+        <button class="btn btn-sm" (click)="saveref()" *ngIf="resultatGetReferentiel.length == 1" style="background-color: rgba(226, 217, 168, 0.693);"> Enregistrement des modifications  <i class="bi bi-pen-fill ms-1"></i></button>
+    </div>
+    <div *ngFor="let all_categorie of referentiel_categorie; let y = index" cdkDropList [id]="'categorieList'+y" [cdkDropListData]="all_categorie.referentiel" [cdkDropListConnectedTo]="connectedDropListsIds" (cdkDropListDropped)="drop($event, all_categorie)">
+    <div class="mt-3 d-flex flex-row justify-content-start align-items-center" style="width: 25%;">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Titre Catégories" [(ngModel)]="all_categorie.titre_categorie" [ngClass]="{'error-border': all_categorie.error}">
+        <button type="button" class="btn btn-sm ms-2" style="background-color: rgb(227, 233, 238);" id="#liveToast" ngbTooltip="Description" placement="bottom" [ngClass]="{'error-border': all_categorie.error}" (click)="toggleToast(y)"><i class="bi bi-list-check"></i></button>
+        <div *ngIf="showToast[y]" class="p-3" style="position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 11;">
+          <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <strong class="me-auto">Description</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" (click)="showToast = false"></button>
+            </div>
+            <div class="toast-body">
+              <div class="form-floating">
+                <textarea class="form-control" [id]="'floatingTextarea' + y" rows="1" style="height: auto; font-size: 12px;" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" [(ngModel)]="all_categorie.description_categorie"></textarea>
+                <label [for]="'floatingTextarea' + y">Tapez ici</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm ms-2" style="background-color: rgb(227, 233, 238);" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseExample_categorie' +y" aria-expanded="false" [attr.aria-controls]="'collapseExample_categorie' +y"><i class="bi bi-eye"></i></button>
+        <button class="btn btn-sm fixed-style-btn ms-2" (click)="deleteAllCategorie(y)" style="background-color: rgb(231, 184, 184);"><i class="bi bi-x-lg"></i> </button>
+      </div>
+      <div class="collapse show mt-2" [id]="'collapseExample_categorie' +y">
+        <div class="card card-body" style="background-color: rgb(243, 243, 243);">
+          <div>
+              <div *ngFor="let item of  all_categorie.referentiel; let i = index">
+                  <div class="d-flex flex-row justify-content-between align-items-center mt-2" cdkDrag style="width: 100%;">
+                      <div cdkDragHandle> <button class="btn btn-lg" style="cursor:grab"><i class="bi bi-grip-vertical"></i></button> </div>
+                      <div class="form-floating" style="width: 60%;">
+                          <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" [(ngModel)]="item.ref" [ngClass]="{'error-border': item.error}"></textarea>
+                          <label for="floatingTextarea2">Référentiel au poste</label>
+                      </div>
+                      <!-- NIVEAU -->
+                      <div class="d-flex flex-row justify-content-between" style="width: 40%;">
+                        <div class="form-floating ms-2" style="width: 39%;">
+                          <select class="form-select" id="categorieSelect{{i}}" aria-label="Catégories" [(ngModel)]="item.nom_categorie" (change)="changeNiveau(all_categorie, item, i)" [ngClass]="{'error-border': item.error}">
+                            <option value="" selected></option>
+                            <option *ngFor="let cat of all_niveau" [value]="cat.categorie">{{cat.categorie}}</option>
+                          </select>
+                          <label for="categorieSelect{{i}}">Catégories</label>
+                        </div>
+                        <div class="form-floating ms-2" style="width: 30%;">
+                          <select class="form-select" id="niveauRequisSelect{{i}}" aria-label="Niveau requis" [(ngModel)]="item.niv_requis" [ngClass]="{'error-border': item.error}">
+                            <option value="" selected></option>
+                            <option *ngFor="let niveau of item.liste_niveau_categorie" [value]="niveau.libelle_niveau">{{niveau.libelle_niveau}}</option>
+                          </select>
+                          <label for="niveauRequisSelect{{i}}">Niveau réquis</label>
+                        </div>
+                        <div class="form-floating ms-2" style="width: 30%;">
+                          <select class="form-select" id="niveauAcceptableSelect{{i}}" aria-label="Niveau acceptable" [(ngModel)]="item.niv_acceptable" [ngClass]="{'error-border': item.error}">
+                            <option value="" selected></option>
+                            <option *ngFor="let niveau of item.liste_niveau_categorie" [value]="niveau.libelle_niveau">{{niveau.libelle_niveau}}</option>
+                          </select>
+                          <label for="floatingSelect">Niveau acceptable</label>
+                        </div>
+                      </div>
+                      <!-- ADD & SUPPR -->
+                      <button class="btn btn-sm fixed-style-btn ms-2" (click)="supprimerObjet(all_categorie, item)" style="background-color: rgb(231, 184, 184);"> <i class="bi bi-x-lg"></i> </button>
+                  </div>
+              </div>
+              <button class="btn btn-sm mt-3" (click)="addReferentiel(all_categorie)" style="background-color: rgb(223, 231, 235);"> <i class="bi bi-plus-lg me-1"></i>référentiel </button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-sm mt-3" (click)="addNewCategorie()" style="background-color: rgb(196, 218, 229);"> <i class="bi bi-plus-lg me-1"></i> Ajouter une nouvelle catégorie </button>
+</div>
+
+
+<!--Modal Paramètrage Niveau-->
+  <div class="modal fade" id="Param_niveau" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalToggleLabel">Paramètrage niveau</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="background-color: rgb(248, 248, 248);">
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">Nom catégorie</span>
+            <input type="text" class="form-control" aria-label="Username" aria-describedby="addon-wrapping" [(ngModel)]="nom_categorie">
+          </div>
+          <div class="input-group mt-2 align-items-center" *ngFor="let item of niveau_categorie; let i = index">
+            <span class="input-group-text">Niveau et Note</span>
+            <input type="text" class="form-control" [id]="'niveau' + i" [(ngModel)]="item.libelle_niveau" [name]="'niveau' + i" style="width: 25%;">
+            <input type="number" class="form-control" [(ngModel)]="item.niveau">
+            <button *ngIf="niveau_categorie.length == i+1" class="btn btn-sm ms-2" style="background-color: rgba(174, 213, 243, 0.805);" (click)="addNiveauCategorie()"><i class="bi bi-plus-lg"></i></button>
+            <button *ngIf="niveau_categorie.length != i+1" class="btn btn-sm ms-2" style="background-color: rgb(231, 184, 184);" (click)="supprimerNiveauCategorie(i)"> <i class="bi bi-dash-lg"></i></button>
+          </div>
+          <hr>
+          <div class="float-end">
+            <button class="btn btn-sm" style="background-color: rgb(204, 222, 204);" (click)="saveNiveau()"> Enregistrer </button>
+            <button class="btn btn-sm ms-2" style="background-color: rgb(228, 228, 228);" data-bs-target="#categorie_niveau" data-bs-toggle="modal" data-bs-dismiss="modal">Liste des catégories</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="categorie_niveau" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalToggleLabel2">Liste des catégories</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body categorie_niveau" style="background-color: rgb(248, 248, 248);">    
+          <div *ngFor="let categorie of nouveauListeNiveau; let catIndex=index" id="accordionExample">
+            <!-- Bouton de la catégorie -->
+            <div class="d-flex flex-row mb-2 align-items-center">
+              <input type="text" class="form-control" [(ngModel)]="categorie.categorie">
+              <button class="btn btn-sm ms-2" style="background-color: rgb(227, 233, 238);" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseExample' + catIndex" aria-expanded="false" [attr.aria-controls]="'collapseExample' + catIndex"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm ms-2" style="background-color: rgb(231, 184, 184);" (click)="deleteCategorie(catIndex)"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <!-- Accordéon pour les niveaux -->
+            <div class="collapse" [id]="'collapseExample' + catIndex">
+              <div class="card card-body mb-2">
+                  <div *ngFor="let niveau of categorie.niveau; let i = index" class="d-flex flex-row mb-1 align-items-center">
+                    <input type="text" class="form-control" style="width: 60%;font-size: 15px;" [(ngModel)]="niveau.libelle_niveau">
+                    <input type="number" class="form-control ms-2" style="width: 30%;font-size: 15px;" [(ngModel)]="niveau.niveau">
+                    <button class="btn btn-sm ms-2" style="background-color: rgb(236, 215, 215);" (click)="deleteNiveau(categorie, i)"><i class="bi bi-x-lg"></i></button>
+                  </div>
+                  <button class="btn btn-sm mt-1" (click)="addNiveau(categorie)" style="background-color: rgb(219, 232, 238);width: 20%;"> <i class="bi bi-plus-lg me-1"></i>Niveau</button>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="float-end">
+            <button class="btn btn-sm" style="background-color: rgba(232, 227, 195, 0.693);" (click)="updateNiveau()"> Enregistrer les modifications </button>
+            <button class="btn btn-sm ms-2" style="background-color:  rgb(228, 228, 228);" data-bs-target="#Param_niveau" data-bs-toggle="modal" data-bs-dismiss="modal">Paramétrage niveau</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

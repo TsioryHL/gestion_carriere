@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil Attrayant</title>
+</head>
+<body>
+    
+    <div class="header">
+        <span class="display-4" id="typed-text"></span>
+        <p>Optimisez le potentiel de vos équipes</p>
+    </div>
+    <div class="intro-box">
+        <h2>Bienvenue sur notre plateforme de gestion de carrière</h2>
+        <p>C'est avant tout un espace dédié à l'excellence professionnelle, où chaque parcours trouve sa voie vers le succès. Notre plateforme incarne l'avant-garde de la gestion de carrière, proposant des solutions innovantes pour élever vos compétences à un niveau supérieur. Ici, le savoir, le savoir-être, et le savoir-faire ne sont pas seulement valorisés, ils sont méticuleusement cultivés pour débloquer votre plein potentiel. En combinant une interface intuitive avec des outils intelligents et accessibles, nous vous guidons à travers le dédale professionnel avec aisance et perspicacité. Rejoignez-nous pour transformer votre trajectoire professionnelle en une aventure enrichissante et fructueuse.</p>
+    </div>
+
+    <div class="content">
+        <div class="box savoir" (click)="navigate('/notesavoir')">
+            <h2>Savoir</h2>
+            <p>Connaissances théoriques et techniques acquises par l'étude ou l'expérience.</p>
+        </div>
+        <div class="box savoir-etre" (click)="navigate('/savoiretre')">
+            <h2>Savoir-être</h2>
+            <p>Compétences comportementales et attitudes professionnelles.</p>
+        </div>
+    
+        <div class="box savoir-faire">
+            <h2>Savoir-faire</h2>
+            <p>Capacité à mettre en pratique les connaissances théoriques.</p>
+            <div class="links" style="margin-left: 125px;">
+                <a style="color: #2986c0;" href="#" (click)="$event.stopPropagation(); navigate('/prod')">Production</a>
+                <span style="color: rgba(255, 246, 246, 0.844);"> | </span>
+                <a *ngIf="role =='Responsable'" style=" color: #2986c0;" href="#" (click)="$event.stopPropagation(); navigate('/cadre')">Cadre</a>
+            </div>
+        </div>
+    </div>    
+        
+    <div class="footer">
+        <p>Droits d'auteur © 2024 Gestion Carrière. Tous droits réservés.</p>
+    </div>
+        
+</body>
+</html>

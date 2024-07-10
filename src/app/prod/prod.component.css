@@ -1,0 +1,38 @@
+.input-group .form-control, .input-group .form-select  {
+    align-items: center;
+    text-align: center;
+}
+
+table.table1 {
+    border-collapse: collapse;
+    border: 1px solid rgb(153, 149, 149);
+    table-layout: fixed;
+  }
+  
+ table.table1 tr, table.table1 td {
+    border: 1px solid rgb(170, 167, 167);
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+  }
+  table .form-control {
+    align-items: center;
+    text-align: center;
+  }
+
+  table.table1 td {
+    line-height: 8px;
+  }
+
+#buttonCollapse:focus{
+  border: none;
+  box-shadow: none;
+}
+
+.success{ background-color: rgb(223, 242, 223);}
+.danger{background-color: rgb(246, 232, 232);}
+.warning{background-color: rgb(246, 246, 226);}
+
+.btn-active {
+  background-color: #4eb58b;
+}

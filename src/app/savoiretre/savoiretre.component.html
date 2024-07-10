@@ -1,0 +1,164 @@
+<div class="px-4 py-1">
+    <div class="d-flex flex-row align-items-center">
+        <div class="input-group mb-3 me-2" style="width: 22%;">
+            <label class="input-group-text" for="inputGroupSelect01">Processus</label>
+            <select class="form-select form-select-sm" id="inputGroupSelect01" aria-label="Floating label select example" [(ngModel)]="processus" (change)="onChangeProcessus()">
+                <option *ngFor="let item of liste_processus" [value]="item.num_processus">{{item.libelle_processus}}</option>
+            </select>
+        </div>
+        <div class="input-group mb-3 me-2" style="width: 26%;">
+            <label class="input-group-text" for="inputGroupSelect01">Ligne</label>
+            <select class="form-select form-select-sm" id="inputGroupSelect01" aria-label="Floating label select example" [(ngModel)]="ligne_filtre" [disabled]="processus != 1" (change)="filtreByProcLigne(processus, ligne_filtre)" >
+                <option value="" selected disabled></option>
+                <option *ngFor="let ligne of lignes_production" [value]="ligne.id_ligne">{{ligne.id_ligne + " - " + ligne.lib_ligne}}</option>
+            </select>
+        </div>
+        <!-- <button type="button" class="btn btn-outline-secondary btn-sm mb-3 me-1" ngbTooltip="Supprimer Point" placement="bottom" (click)="resetAllSelected()"><i class="bi bi-x-circle-fill"></i></button> -->
+
+        <div class="input-group mb-3 me-2" style="width: 16%;">
+            <span class="input-group-text" id="basic-addon1">Matricule</span>
+            <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="matricule_filtre" (keyup)="filtreByMatricule(matricule_filtre)">
+        </div>
+            <div class="input-group mb-3 me-2" style="width: 22%;">
+                <span class="input-group-text" id="basic-addon1">Date début</span>
+                <input type="date" class="form-control" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="date_debut">
+            </div>
+            <div class="input-group mb-3 me-2" style="width: 20%;">
+                <span class="input-group-text" id="basic-addon1">Date fin</span>
+                <input type="date" class="form-control" aria-label="Username" aria-describedby="basic-addon1" [(ngModel)]="date_fin">
+            </div>
+            <button class="btn btn-outline-secondary btn-sm mb-3 me-2" style="width: 2%;" ngbTooltip="Filtre date" placement="bottom" (click)="getListePersonnel(); calculNoteProduction()"><i class="bi bi-funnel-fill"></i></button>
+            <button type="button" class="btn btn-outline-secondary btn-sm mb-3 me-2" ngbTooltip="Retour" placement="bottom" (click)="resetFiltre()"> <i class="bi bi-arrow-clockwise"></i> </button>
+            <!-- <div class="bg-white px-3 py-1 rounded border mb-3 me-2">
+                <span style="width: 50%;">{{ nombre_savoir_etre_definis+"/"+liste_personnel_dynamique.length }}</span>
+            </div> -->
+    </div>
+      
+    <div style="overflow-x: auto; max-height: 705px;">
+        <div style="width:200%;">
+            <table style="width: 119%; vertical-align: middle;" class="table table-bordered shadow-sm">
+                <thead>
+                    <tr>
+                        <td  style="background-color: rgb(173, 207, 240);" colspan="2">PERSONNEL</td>
+                        <td  style="background-color: rgb(173, 207, 240);" colspan="6">BILAN DE L'ACTIVITE PROFESSIONNELLE PRODUCTION</td>
+                        <td  style="background-color: rgb(173, 207, 240);" colspan="12">COMPORTEMENT EQUIPE PRODUCTION</td>
+                        <td  style="background-color: rgb(173, 207, 240);" rowspan="2">NOTE SAVOIR ETRE</td>
+                    </tr>
+                    <tr class="secondLign">
+                        <td style="background-color: rgb(242, 228, 228);">MATRICULE</td>
+                        <td style="background-color: rgb(242, 228, 228);">NOM</td>
+                        <td style="background-color: rgb(242, 228, 228);">COMMUNIQUER</td>
+                        <td style="background-color: rgb(242, 228, 228);">COOPERER</td>
+                        <td style="background-color: rgb(242, 228, 228);">CRÉER/PROPOSER</td>
+                        <td style="background-color: rgb(242, 228, 228);">ORGANISER</td>
+                        <td style="background-color: rgb(242, 228, 228);">DISPONIBILITE</td>
+                        <td style="background-color: rgb(242, 228, 228);">MOTIVATION POUR LE POSTE</td>
+                        <td style="background-color: rgb(242, 228, 228);">RETARD_Fréquence</td>
+                        <td style="background-color: rgb(242, 228, 228);">RETARD_Bonus</td>
+                        <td style="background-color: rgb(242, 228, 228);">RETARD_MALUS</td>
+                        <td style="background-color: rgb(242, 228, 228);">ABSENCE SM_Fréquence</td>
+                        <td style="background-color: rgb(242, 228, 228);">ABSENCE SM_Bonus</td>
+                        <td style="background-color: rgb(242, 228, 228);">ABSENCE SM_Malus</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT VERBAL_Fréquence</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT VERBAL_Bonus</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT VERBAL_Malus</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT ECRIT_Fréquence</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT ECRIT_Bonus</td>
+                        <td style="background-color: rgb(242, 228, 228);">AVERTISSEMENT ECRIT_Malus</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of liste_personnel_paginee; let i = index">
+                        <td>{{item.matricule}}</td>
+                        <td>{{item.nom + " " + item.prenoms}}</td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointcommuniquer == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select [disabled]="item.pointcommuniquer || item.pointcommuniquer.length ===0" style="font-size: 13px;" aria-label="Communiquer Select" [(ngModel)]="item.pointcommuniquer" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                            <!-- <button class="mt-1" (click)="resetSelectedItem(item)"><i class="bi bi-x-circle-fill"></i></button> -->
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointcooperer == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select class="form-select form-select-sm" [disabled]="item.pointcooperer|| item.pointcooperer.length ===0" style="font-size: 13px" aria-label="Communiquer Select" [(ngModel)]="item.pointcooperer" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointproposer == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select class="form-select form-select-sm" [disabled]="item.pointproposer|| item.pointproposer.length ===0" style="font-size: 13px" aria-label="Communiquer Select" [(ngModel)]="item.pointproposer" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointorganiser == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select class="form-select form-select-sm" [disabled]="item.pointorganiser|| item.pointorganiser.length ===0" style="font-size: 13px" aria-label="Communiquer Select" [(ngModel)]="item.pointorganiser" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointdisponibilite == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select class="form-select form-select-sm" [disabled]="item.pointdisponibilite|| item.pointdisponibilite.length ===0" style="font-size: 13px" aria-label="Communiquer Select" [(ngModel)]="item.pointdisponibilite" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                        </td>
+                        <td>
+                            <ng-container *ngFor="let point of liste_point">
+                                <span *ngIf="item.pointmotivation == point.num_point">{{point.libelle_point}}</span>
+                            </ng-container>
+                            <!--<select class="form-select form-select-sm" [disabled]="item.pointmotivation|| item.pointcommuniquer.length ===0" style="font-size: 13px" aria-label="Communiquer Select" [(ngModel)]="item.pointmotivation" (change)="calculNoteProduction()">
+                                <option *ngFor="let point of liste_point" style="text-align: center;" [value]="point.num_point">{{point.libelle_point}}</option>
+                            </select>-->
+                        </td>
+                        <td>{{item.nombre_retards_exacte}}</td>
+                        <td>{{item.retard_bonus}}</td>
+                        <td>{{item.retard_malus}}</td>
+                        <td>{{item.nombre_absences_exacte}}</td>
+                        <td>{{item.absence_bonus}}</td>
+                        <td>{{item.absence_malus}}</td>
+                        <td>{{item.nombre_avertissement_verbal_exacte}}</td>
+                        <td>{{item.avertissement_verbal_bonus}}</td>
+                        <td>{{item.avertissement_verbal_malus}}</td>
+                        <td>{{item.nombre_avertissement_ecrit_exacte}}</td>
+                        <td>{{item.avertissement_ecrit_bonus}}</td>
+                        <td>{{item.avertissement_ecrit_malus}}</td>
+                        <td>{{item.note_savoir_etre}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- <button type="button" class=" mt-4 btn btn-sm" [disabled]="!processus || processus.length === 0" style="background-color: rgba(105, 169, 232, 0.49);"  (click)="saveSavoirEtre()">Enregistrer</button> -->
+    <nav aria-label="Pagination du personnel" class="mt-1">
+        <ul class="mt-1 pagination justify-content-end">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" style="font-size: 12px;" href="javascript:void(0)" aria-label="Previous" (click)="setPage(currentPage - 1)">
+              <span aria-hidden="true">&laquo; Previous</span>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+            <a class="page-link" style="font-size: 12px;" href="javascript:void(0)" (click)="setPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" style="font-size: 12px;" href="javascript:void(0)" aria-label="Next" (click)="setPage(currentPage + 1)">
+              <span aria-hidden="true">Next &raquo;</span>
+            </a>
+          </li>
+        </ul>
+    </nav>
+      
+</div>
+
+
+
+  
